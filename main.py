@@ -6,7 +6,7 @@ Author: Haeder Ali
 import click
 import sys
 from pathlib import Path
-from google_maps_scraper import GoogleMapsScraper
+from google_maps_scraper import GoogleMapsBusinessScraper
 
 @click.command()
 @click.option('--query', '-q', required=True, help='Business type to search for (e.g., "restaurants", "retail stores")')
@@ -51,7 +51,7 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         if verbose:
             click.echo("Initializing scraper...")
 
-        scraper = GoogleMapsScraper(headless=headless, delay=delay)
+        scraper = GoogleMapsBusinessScraper(headless=headless, delay=delay)
 
         # Perform search
         if verbose:
@@ -72,3 +72,85 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         click.echo(f"Successfully scraped {len(scraper.businesses)} businesses.")
 
         # Save to CSV
+        if verbose:
+            click.echo(f"Saving to CSV: {output}")
+
+        # Update to Google Sheets if requested
+        if sheets_id and credentials:
+            if verbose:
+                click.echo("Uploading to Google Sheets...")
+
+            try:
+                scraper.save_to_google_sheets(sheets_id, credentials)
+                click.echo("✅ Data uploaded to Google Sheets")
+            except Exception as e:
+                click.echo(f"❌ Failed to upload to Google Sheets: {e}", err=True)
+
+        # Display Summary
+        click.echo("\n📊 Summary:")
+        click.echo(f"Total businesses scraped: {len(scraper.businesses)}")
+
+        # Show sample of data
+        if scraper.businesses:
+            click.echo("\n📝 Sample data:")
+            sample = scraper.businesses[0]
+            for key, value in sample.items():
+                if value: # Only show non-empty values
+                    click.echo(f" {key}: {value}")
+    
+    except KeyboardInterrupt:
+        click.echo("\n⚠ Scraping interrupted by user", err=True)
+        sys.exit(1)
+
+    except Exception as e:
+        click.echo(f"❌ Error: {e}", err=True)
+        if verbose:
+            import traceback
+            click.echo(traceback,format_exc(), err=True)
+        sys.exit(1)
+
+    finally:
+        if scraper:
+            scraper.close()
+    
+@click.command()
+@click.option('--config-file', default='congig.json', help='Configuratuion file path')
+def batch(config_file):
+    """
+    Run batch scraping using a configuration file.
+    
+    Config file should contain:
+    {
+        "searches": [
+            {
+                "query": "restaurants",
+                "location": "New York, NY",
+                "max_results": 50,
+                "output": "ny_restaurants.csv"
+            }
+        ],
+        "settings": {
+            "headless": true,
+            "delay": 2
+        }
+    }
+    """
+    import json
+
+    if not Path(config_file).exists():
+        click.echo(f"Config file not found: {config_file}", err=True)
+        sys.exit(1)
+    
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+
+        searches = config.get('searcher', [])
+        settings = config.get('settings', {})
+
+        scraper = GoogleMapsBussinessScraper(
+            headless=settings.get('headless', True),
+            delay=settings.get('delay', 2)
+        )
+
+        for i, search in enumerate(searches, )
