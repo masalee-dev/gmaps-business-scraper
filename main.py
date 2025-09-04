@@ -148,9 +148,43 @@ def batch(config_file):
         searches = config.get('searcher', [])
         settings = config.get('settings', {})
 
-        scraper = GoogleMapsBussinessScraper(
+        scraper = GoogleMapsBusinessScraper(
             headless=settings.get('headless', True),
             delay=settings.get('delay', 2)
         )
 
-        for i, search in enumerate(searches, )
+        for i, search in enumerate(searches, 1):
+            click.echo(f"\n🔎 Batch job {i}/{len(searches)}")
+            click.echo(f"Query: {search['query']}, Location: {search['location']}")
+
+            scraper.search_businesses(
+                query=search['query'],
+                location=search['location'],
+                max_results=search.get('max_results', 50)
+            )
+
+            output_file = search.get('output', f"batch_{i}.csv")
+            scraper.save_to_csv(output_file)
+
+            click.echo(f"✅ Saved {len(scraper.businesses)} businesses to {output_file}")
+
+            # Clear businesses for next search
+            scraper.businesses = []
+        
+        scraper.close()
+        click.echo("\n🎉 Batch scraping completed.")
+    
+    except Exception as e:
+        click.echo (f"❌ Bacth Error: {e}", err=True)
+        sys.exit(1)
+
+@click.group()
+def cli():
+    """Google Maps Business Scraper - Extract business data from Google Maps."""
+    pass
+
+cli.add_command(scrape)
+cli.add_command(batch)
+
+if __name__ == '__main__':
+    cli()
