@@ -106,7 +106,7 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         click.echo(f"❌ Error: {e}", err=True)
         if verbose:
             import traceback
-            click.echo(traceback,format_exc(), err=True)
+            click.echo(traceback.format_exc(), err=True)
         sys.exit(1)
 
     finally:

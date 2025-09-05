@@ -30,7 +30,7 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Utilities"
-    ]
+    ],
     python_requires='>=3.7',
     install_requires=requirements,
     entry_points={
