@@ -128,18 +128,18 @@ Options:
 ```
 
 ## Project Structure
-google-maps-scraper/
-├── google_maps_scraper.py    # Main scraper class
-├── main.py                   # CLI interface
-├── requirements.txt          # Dependencies
-├── config.py                # Configuration settings
-├── examples/                 # Usage examples
-│   ├── basic_usage.py
-│   └── batch_scraping.py
-├── tests/                   # Unit tests
-│   └── test_scraper.py
-├── .gitignore               # Git ignore rules
-└── README.md               # This file
+    GMAPS-BUSINESS-SCRAPER/
+    ├── google_maps_scraper.py    # Main scraper class
+    ├── main.py                   # CLI interface
+    ├── requirements.txt          # Dependencies
+    ├── config.py                # Configuration settings
+    ├── examples/                 # Usage examples
+    │   ├── basic_usage.py
+    │   └── batch_scraping.py
+    ├── tests/                   # Unit tests
+    │   └── test_scraper.py
+    ├── .gitignore               # Git ignore rules
+    └── README.md               # This file
 
 ## Error Handling
 The scraper includes robust error handling for:
@@ -198,9 +198,9 @@ If you encounter issues or have questions:
 2. Create a new issue with detailed information
 
 ## Roadmap
- Add proxy support
- Implement async scraping
- Add more export formats (JSON, Excel)
- Create web interface
- Add data validation and cleaning
- Implement caching mechanism
+    Add proxy support
+    Implement async scraping
+    Add more export formats (JSON, Excel)
+    Create web interface
+    Add data validation and cleaning
+    Implement caching mechanism
