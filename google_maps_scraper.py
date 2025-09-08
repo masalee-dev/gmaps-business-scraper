@@ -179,3 +179,82 @@ class GoogleMapsBusinessesScraper:
             return None
         
     def save_to_csv(self, filename="google_maps_businesses.csv"):
+        """Save scraped data to a CSV file"""
+        if not self.businesses:
+            print("No business data to save")
+            return
+        
+        df = pd.DataFrame(self.businesses)
+        df.to_csv(filename, index=False)
+        print(f"Saved {len(self.businesses)} businesses to {filename}")
+
+    def save_to_google_sheets(self, sheet_id, credentials_file):
+        """
+        Save data to Google Sheets using Google Sheets API
+        Requires: pip install gspread oauth2client
+        """
+        try:
+            import gspread
+            from oauth2client.service_account import ServiceAccountCredentials
+
+            scope = ['https://spreadsheets.google.com/feeds',
+                     'https://www.googleapis.com/auth/drive']
+            
+            creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_file, scope)
+            client = gspread.authorize(creds)
+
+            sheet = client.open_by_key(sheet_id).sheet1
+
+            if self.businesses:
+                df = pd.DataFrame(self.businesses)
+
+                # Clear existing data
+                sheet.clear()
+
+                # Add headers
+                headers = df.columns.tolist()
+                sheet.append_row(headers)
+
+                # Add data rows
+                for _, row in df.iterrows():
+                    sheet.append_row(row.tolist())
+
+                print(f"Successfully uploaded {len(self.businesses)} businesses to Google Sheets")
+
+        except ImportError:
+            print("Please install required packages: pip install gspread oauth2client")
+        except Exception as e:
+            print(f"Error uploading to Google Sheets: {e}")
+
+    def close(self):
+        """Close the WebDriver"""
+        self.driver.quit()
+
+# Example usage
+def main():
+    scraper = GoogleMapsBusinessesScraper(headless=True)
+
+    try:
+        # Search for retail businesses
+        scraper.search_businesses(
+            query="retail stores",
+            location="New York, NY",
+            max_results=20
+        )
+
+        # Save results
+        scraper.save_to_csv("retail_businesses_ny.csv")
+
+        # Optionally save to Google Sheets (requires setup)
+        # scraper.save_to_google_sheets("your_sheet_id", "credentials.json")
+
+        print("Scraping completed successfully!")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    finally:
+        scraper.close()
+
+if __name__ == "__main__":
+    main() 
