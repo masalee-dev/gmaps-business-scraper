@@ -23,7 +23,10 @@ class GoogleMapsBusinessesScraper:
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-blink-features=AutomationsControlled")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--log-level=3")
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
 
         driver = webdriver.Chrome(options=chrome_options)
@@ -82,7 +85,7 @@ class GoogleMapsBusinessesScraper:
 
             # Check if new content loaded
             new_height = self.driver.execute_script(
-                "return arguments[0].scrollheight",
+                "return arguments[0].scrollHeight",
                 results_panel
             )
 
@@ -99,7 +102,7 @@ class GoogleMapsBusinessesScraper:
 
     def _get_business_links(self):
         """Extract links to individual business pages"""
-        business_elements = self.driver.find_elements(By.CSS_SELECTOR, "[data-results-index] a")
+        business_elements = self.driver.find_elements(By.CSS_SELECTOR, "a.hfpxzc")
         return [elem.get_attribute('href') for elem in business_elements if elem.get_attribute('href')]
     
     def _extract_business_data(self, url):
@@ -237,13 +240,13 @@ def main():
     try:
         # Search for retail businesses
         scraper.search_businesses(
-            query="retail stores",
+            query="cafe",
             location="New York, NY",
             max_results=20
         )
 
         # Save results
-        scraper.save_to_csv("retail_businesses_ny.csv")
+        scraper.save_to_csv("cafe_businesses_ny.csv")
 
         # Optionally save to Google Sheets (requires setup)
         # scraper.save_to_google_sheets("your_sheet_id", "credentials.json")

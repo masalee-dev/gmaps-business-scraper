@@ -6,7 +6,7 @@ Author: Haeder Ali
 import click
 import sys
 from pathlib import Path
-from google_maps_scraper import GoogleMapsBusinessScraper
+from google_maps_scraper import GoogleMapsBusinessesScraper
 
 @click.command()
 @click.option('--query', '-q', required=True, help='Business type to search for (e.g., "restaurants", "retail stores")')
@@ -15,7 +15,7 @@ from google_maps_scraper import GoogleMapsBusinessScraper
 @click.option('--output', '-o', default='businesses.csv', help='Output CSV filename')
 @click.option('--headless/--no-headless', default=True, help='Run browser in headless mode')
 @click.option('--sheets-id', help='Google Sheets ID to upload results')
-@click.option('credentials', help='Path to Google API credentials JSON file')
+@click.option('--credentials', help='Path to Google API credentials JSON file')
 @click.option('--delay', default=2, help='Delay between requests in seconds')
 @click.option('--verbose', '-v', is_flag=True, help='Enable verbose output')
 def scrape(query, location, max_results, output, headless, sheets_id, credentials, delay, verbose):
@@ -51,7 +51,7 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         if verbose:
             click.echo("Initializing scraper...")
 
-        scraper = GoogleMapsBusinessScraper(headless=headless, delay=delay)
+        scraper = GoogleMapsBusinessesScraper(headless=headless, delay=delay)
 
         # Perform search
         if verbose:
@@ -148,7 +148,7 @@ def batch(config_file):
         searches = config.get('searcher', [])
         settings = config.get('settings', {})
 
-        scraper = GoogleMapsBusinessScraper(
+        scraper = GoogleMapsBusinessesScraper(
             headless=settings.get('headless', True),
             delay=settings.get('delay', 2)
         )
