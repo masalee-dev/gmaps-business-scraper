@@ -51,19 +51,17 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         if verbose:
             click.echo("Initializing scraper...")
 
-        scraper = GoogleMapsBusinessesScraper(headless=headless, delay=delay)
+        scraper = GoogleMapsBusinessesScraper(headless=headless)
 
-        # Perform search
+        # Perform search, 
         if verbose:
             click.echo(f"Searching for '{query}' in '{location}'...")
 
-        with click.progressbar(length=max_results, label='Scraping businesses') as bar:
-            scraper.search_businesses(
-                query=query,
-                location=location,
-                max_results=max_results,
-                progress_callback=bar.update
-            )
+        scraper.search_businesses(
+            query=query,
+            location=location,
+            max_results=max_results
+        )
 
         if not scraper.businesses:
             click.echo("No businesses found. Try adjusting your search terms.", err=True)
