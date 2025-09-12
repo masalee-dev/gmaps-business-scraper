@@ -73,6 +73,8 @@ def scrape(query, location, max_results, output, headless, sheets_id, credential
         if verbose:
             click.echo(f"Saving to CSV: {output}")
 
+        scraper.save_to_csv(output)
+
         # Update to Google Sheets if requested
         if sheets_id and credentials:
             if verbose:
@@ -143,7 +145,7 @@ def batch(config_file):
         with open(config_file, 'r') as f:
             config = json.load(f)
 
-        searches = config.get('searcher', [])
+        searches = config.get('searchers', [])
         settings = config.get('settings', {})
 
         scraper = GoogleMapsBusinessesScraper(

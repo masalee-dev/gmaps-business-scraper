@@ -164,7 +164,7 @@ class GoogleMapsBusinessesScraper:
                 
                 review_match = re.search(r'\(([0-9,]+)\)', rating_text)
                 if review_match:
-                    business_data['review_count'] = review_match.group(1)
+                    business_data['reviews_count'] = review_match.group(1)
             except:
                 pass
 
@@ -242,7 +242,7 @@ def main():
         scraper.search_businesses(
             query="cafe",
             location="New York, NY",
-            max_results=20
+            max_results=50
         )
 
         # Save results
